@@ -1,19 +1,24 @@
 <?php
-$dsn = 'mysql:dbname=test;host=127.0.0.1;port=3006;charset=utf8mb4';
-$user= 'root';
-$password = 'root';
+// $dsn = 'mysql:dbname=test;host=127.0.0.1;port=3006;charset=utf8mb4';
+// $user= 'root';
+// $password = 'root';
 
-try {
-    $db  = new PDO($dsn, $user, $password);
-} catch (PDOException $e) {
-    echo "接続に失敗しました：" . $e->getMessage() . "\n";
-    exit();
-}
+// try {
+//     $db  = new PDO($dsn, $user, $password);
+// } catch (PDOException $e) {
+//     echo "接続に失敗しました：" . $e->getMessage() . "\n";
+//     exit();
+// }
 
-$users = $db->query("SELECT * FROM users WHERE del_flg = false") 
-           ->fetchAll(PDO::FETCH_ASSOC);
+// $users = $db->query("SELECT * FROM users WHERE del_flg = false") 
+//            ->fetchAll(PDO::FETCH_ASSOC);
 
-var_dump($users);
+// var_dump($users);
+
+//user.phpを読み込む＆クラスuserをインスタンス化
+require_once 'user.php';
+$user = new User();
+$users = $user->index();
 
 if (!empty($_GET['id'])) {
     $id = $_GET['id'];
@@ -22,6 +27,16 @@ if (!empty($_GET['id'])) {
     $stmt->bindValue(':id', $id, PDO::PARAM_STR);
     $stmt->execute();
     header('Location: http://localhost:8080');
+}
+
+$errorMessage = null;
+if (!empty($_GET['id'])) {
+    try {
+        $user->delete($_GET['id']);
+        header('Location: http://localhost:8080');
+    } catch (Exception $e) {
+        $errorMessage = $e->getMessage();
+    }
 }
 ?>
 <html lang="ja">
@@ -34,6 +49,11 @@ if (!empty($_GET['id'])) {
 </head>
 <body>
     <div class="container w-auto inline-block px-8">
+    <?php if ($errorMessage): ?>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <span class="block sm:inline"><?php echo $errorMessage ?></span>
+        </div>
+    <?php endif; ?>
         <div class="mt-20 mb-10 flex justify-between">
             <h1 class="text-base">登録者一覧</h1>
             <button 

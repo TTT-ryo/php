@@ -1,15 +1,17 @@
 <?php
-// 最初にDBへの接続を書きます
-$dsn = 'mysql:dbname=test;host=127.0.0.1;port=3006;charset=utf8mb4';
-$user = 'root';
-$password = 'root';
+// $dsn = 'mysql:dbname=test;host=127.0.0.1;port=3006;charset=utf8mb4';
+// $user = 'root';
+// $password = 'root';
 
-try {
-    $db  = new PDO($dsn, $user, $password);
-} catch (PDOException $e) {
-    echo "接続に失敗しました：" . $e->getMessage() . "\n";
-    exit();
-}
+// try {
+//     $db  = new PDO($dsn, $user, $password);
+// } catch (PDOException $e) {
+//     echo "接続に失敗しました：" . $e->getMessage() . "\n";
+//     exit();
+// }
+
+require_once 'user.php';
+require_once 'validationException.php';
 
 $id = isset($_GET['id']) ? $_GET['id'] : null;
 
@@ -32,6 +34,35 @@ if (!empty($_POST)) {
     $stmt->execute();
     header('Location: http://localhost:8080');
 }
+
+$class = new User();
+$id = isset($_GET['id']) ? $_GET['id'] : null;
+$errorMessage = [];
+$user = null;
+
+if (is_null($id)) {
+    $errorMessage[] = 'URLが不正です';
+} else {
+    $user = $class->show($id);
+}
+
+if (!is_null($id) && empty($user)) {
+    $errorMessage[] = '登録者が存在しません';
+}
+
+if (!empty($_POST)) {
+    $name = $_POST['name'];
+    $tel = $_POST['tel'];
+    $address = $_POST['address'];
+
+    try {
+        $class->update($id, $name, $tel, $address);
+        header('Location: http://localhost:8080');
+
+    } catch (ValidationException $e) {
+        $errorMessage = $e->getArrayMessage();
+    }
+}
 ?>
 <html lang="ja">
 <head>
@@ -44,53 +75,62 @@ if (!empty($_POST)) {
 <body>
     <div class="container w-auto inline-block px-8">
         <div> 
+            <?php if (!empty($errorMessage)): ?>
+                <?php foreach($errorMessage as $message): ?>
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                        <span class="block sm:inline"><?php echo $message ?></span>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
             <div class="flex justify-between">
                 <h2 class="text-base mb-4">更新</h2>
                 <button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
                     <a href="/">戻る</a>
                 </button>
             </div>
-            <form method="POST">
-                <div class="mb-4">
-                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                    名前
-                    </label>
-                    <input 
-                        class="appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                        type="text"
-                        name="name"
-                        value="<?php echo $user['name'] ?>"
+            <?php if($user): ?>
+                <form method="POST">
+                    <div class="mb-4">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                        名前
+                        </label>
+                        <input 
+                            class="appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                            type="text"
+                            name="name"
+                            value="<?php echo $user['name'] ?>"
+                        >
+                    </div>
+                    <div class="mb-4">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                        住所
+                        </label>
+                        <input 
+                            class="appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                            type="text"
+                            name="address"
+                            value="<?php echo $user['address'] ?>"
+                        >
+                    </div>
+                    <div class="mb-4">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                        電話番号
+                        </label>
+                        <input
+                            class="appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                            type="text"
+                            name="tel"
+                            value="<?php echo $user['tel'] ?>"
+                        >
+                    </div>
+                    <button 
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        type="submit"
                     >
-                </div>
-                <div class="mb-4">
-                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                    住所
-                    </label>
-                    <input 
-                        class="appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                        type="text"
-                        name="address"
-                        value="<?php echo $user['address'] ?>"
-                    >
-                </div>
-                <div class="mb-4">
-                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                    電話番号
-                    </label>
-                    <input
-                        class="appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                        type="text"
-                        name="tel"
-                        value="<?php echo $user['tel'] ?>"
-                    >
-                </div>
-                <button 
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                    type="submit"
-                >
-                    更新
-                </button>
-            </form>
+                        更新
+                    </button>
+                </form>
+            <?php endif; ?>
         </div> 
     </div>
 </body>
