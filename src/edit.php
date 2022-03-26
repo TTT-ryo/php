@@ -1,39 +1,6 @@
 <?php
-// $dsn = 'mysql:dbname=test;host=127.0.0.1;port=3006;charset=utf8mb4';
-// $user = 'root';
-// $password = 'root';
-
-// try {
-//     $db  = new PDO($dsn, $user, $password);
-// } catch (PDOException $e) {
-//     echo "接続に失敗しました：" . $e->getMessage() . "\n";
-//     exit();
-// }
-
 require_once 'user.php';
 require_once 'validationException.php';
-
-$id = isset($_GET['id']) ? $_GET['id'] : null;
-
-$stmt = $db->prepare("SELECT * FROM users WHERE id = :id");
-$stmt->bindValue(':id', $id);
-$stmt->execute();
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!empty($_POST)) {
-    $name = $_POST['name'];
-    $tel = $_POST['tel'];
-    $address = $_POST['address'];
-
-    $sql = "UPDATE users SET name = :name, address = :address, tel = :tel WHERE id = :id AND del_flg = false";
-    $stmt = $db->prepare($sql);
-    $stmt->bindValue(':name', $name, PDO::PARAM_STR);
-    $stmt->bindValue(':tel', $tel, PDO::PARAM_STR);
-    $stmt->bindValue(':address', $address, PDO::PARAM_STR);
-    $stmt->bindValue(':id', $id, PDO::PARAM_STR);
-    $stmt->execute();
-    header('Location: http://localhost:8080');
-}
 
 $class = new User();
 $id = isset($_GET['id']) ? $_GET['id'] : null;

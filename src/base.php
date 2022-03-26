@@ -1,5 +1,5 @@
 <?php
-//phpファイルの頭に記述していたPDOを一つのファイルにまとめる
+//phpファイルの頭に記述していたPDOを一つのファイルにまとめる＝共通化
 class Base
 {
     const DNS = 'mysql:dbname=test;host=127.0.0.1;port=3006;charset=utf8mb4';
@@ -26,3 +26,4 @@ class Base
         $this->db = null;
     }
 }
+?>

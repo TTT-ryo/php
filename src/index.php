@@ -1,33 +1,8 @@
 <?php
-// $dsn = 'mysql:dbname=test;host=127.0.0.1;port=3006;charset=utf8mb4';
-// $user= 'root';
-// $password = 'root';
-
-// try {
-//     $db  = new PDO($dsn, $user, $password);
-// } catch (PDOException $e) {
-//     echo "接続に失敗しました：" . $e->getMessage() . "\n";
-//     exit();
-// }
-
-// $users = $db->query("SELECT * FROM users WHERE del_flg = false") 
-//            ->fetchAll(PDO::FETCH_ASSOC);
-
-// var_dump($users);
-
 //user.phpを読み込む＆クラスuserをインスタンス化
 require_once 'user.php';
 $user = new User();
 $users = $user->index();
-
-if (!empty($_GET['id'])) {
-    $id = $_GET['id'];
-    $sql = "UPDATE users SET del_flg = true WHERE id = :id AND del_flg = false";
-    $stmt = $db->prepare($sql);
-    $stmt->bindValue(':id', $id, PDO::PARAM_STR);
-    $stmt->execute();
-    header('Location: http://localhost:8080');
-}
 
 $errorMessage = null;
 if (!empty($_GET['id'])) {
@@ -37,6 +12,16 @@ if (!empty($_GET['id'])) {
     } catch (Exception $e) {
         $errorMessage = $e->getMessage();
     }
+}
+
+//削除機能
+if (!empty($_GET['id'])) {
+    $id = $_GET['id'];
+    $sql = "UPDATE users SET del_flg = true WHERE id = :id AND del_flg = false";
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue(':id', $id, PDO::PARAM_STR);
+    $stmt->execute();
+    header('Location: http://localhost:8080');
 }
 ?>
 <html lang="ja">

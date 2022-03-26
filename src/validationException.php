@@ -1,5 +1,5 @@
 <?php
-//Exceptionを拡張
+//Exceptionを拡張→複数の文字列をエラー文として表示を行いたいが、単純なexceptionは複数の文字列を受け取ることができないため
 class ValidationException extends Exception
 {
     public function __construct(array $message = null, int $code = 0, Exception $previous = null)
@@ -12,3 +12,4 @@ class ValidationException extends Exception
         return json_decode($this->getMessage(), $assoc);
     }
 }
+?>

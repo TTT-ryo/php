@@ -33,29 +33,7 @@ class User extends Base
     }
   }
 
-  public function show(string $id)
-  {
-    $stmt = $this->db
-        ->prepare("SELECT * FROM users WHERE id = :id");
-    $stmt->bindValue(':id', $id);
-    $stmt->execute();
-    return $stmt->fetch(PDO::FETCH_ASSOC);
-  }
-
-  public function update(string $id, string $name, string $tel, string $address)
-  {
-    $this->name = $name;
-    $this->tel = $tel;
-    $this->address = $address;
-    $this->validation();
-    $sql = "UPDATE users SET name = :name, address = :address, tel = :tel WHERE id = :id AND del_flg = false";
-    $stmt = $this->db->prepare($sql);
-    if (!$this->createOrUpdate($stmt, $id)) {
-        throw new Exception('更新できませんでした');
-    }
-  }
-
-  //新規作成バリデーション
+  // //新規作成メソッド
   public function create(string $name, string $tel, string $address)
   {
     $this->name = $name;
@@ -69,6 +47,30 @@ class User extends Base
     }
   }
 
+  public function show(string $id)
+  {
+    $stmt = $this->db
+        ->prepare("SELECT * FROM users WHERE id = :id");
+    $stmt->bindValue(':id', $id);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
+
+  //更新メソッド
+  public function update(string $id, string $name, string $tel, string $address)
+  {
+    $this->name = $name;
+    $this->tel = $tel;
+    $this->address = $address;
+    $this->validation();
+    $sql = "UPDATE users SET name = :name, address = :address, tel = :tel WHERE id = :id AND del_flg = false";
+    $stmt = $this->db->prepare($sql);
+    if (!$this->createOrUpdate($stmt, $id)) {
+        throw new Exception('更新できませんでした');
+    }
+  }
+
+  //バリデーションメソッド
   private function validation()
   {
     $errorMessage = [];
