@@ -6,22 +6,22 @@ $users = $user->index();
 
 $errorMessage = null;
 if (!empty($_GET['id'])) {
-    try {
-        $user->delete($_GET['id']);
-        header('Location: http://localhost:8080');
-    } catch (Exception $e) {
-        $errorMessage = $e->getMessage();
-    }
+  try {
+    $user->delete($_GET['id']);
+    header('Location: http://localhost:8080');
+  } catch (Exception $e) {
+    $errorMessage = $e->getMessage();
+  }
 }
 
 //削除機能
 if (!empty($_GET['id'])) {
-    $id = $_GET['id'];
-    $sql = "UPDATE users SET del_flg = true WHERE id = :id AND del_flg = false";
-    $stmt = $db->prepare($sql);
-    $stmt->bindValue(':id', $id, PDO::PARAM_STR);
-    $stmt->execute();
-    header('Location: http://localhost:8080');
+  $id = $_GET['id'];
+  $sql = "UPDATE users SET del_flg = true WHERE id = :id AND del_flg = false";
+  $stmt = $db->prepare($sql);
+  $stmt->bindValue(':id', $id, PDO::PARAM_STR);
+  $stmt->execute();
+  header('Location: http://localhost:8080');
 }
 ?>
 <html lang="ja">

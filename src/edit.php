@@ -8,27 +8,26 @@ $errorMessage = [];
 $user = null;
 
 if (is_null($id)) {
-    $errorMessage[] = 'URLが不正です';
+  $errorMessage[] = 'URLが不正です';
 } else {
-    $user = $class->show($id);
+  $user = $class->show($id);
 }
 
 if (!is_null($id) && empty($user)) {
-    $errorMessage[] = '登録者が存在しません';
+  $errorMessage[] = '登録者が存在しません';
 }
 
 if (!empty($_POST)) {
-    $name = $_POST['name'];
-    $tel = $_POST['tel'];
-    $address = $_POST['address'];
+  $name = $_POST['name'];
+  $tel = $_POST['tel'];
+  $address = $_POST['address'];
 
-    try {
-        $class->update($id, $name, $tel, $address);
-        header('Location: http://localhost:8080');
-
-    } catch (ValidationException $e) {
-        $errorMessage = $e->getArrayMessage();
-    }
+  try {
+    $class->update($id, $name, $tel, $address);
+    header('Location: http://localhost:8080');
+  } catch (ValidationException $e) {
+    $errorMessage = $e->getArrayMessage();
+  }
 }
 ?>
 <html lang="ja">

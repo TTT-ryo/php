@@ -5,17 +5,16 @@ $user = new User();
 
 $errorMessage = [];
 if (!empty($_POST)) {
-    $name = $_POST['name'];
-    $tel = $_POST['tel'];
-    $address = $_POST['address'];
+  $name = $_POST['name'];
+  $tel = $_POST['tel'];
+  $address = $_POST['address'];
 
-    try {
-        $user->create($name, $tel, $address);
-        header('Location: http://localhost:8080');
-
-    } catch (ValidationException $e) {
-        $errorMessage = $e->getArrayMessage();
-    }
+  try {
+    $user->create($name, $tel, $address);
+    header('Location: http://localhost:8080');
+  } catch (ValidationException $e) {
+    $errorMessage = $e->getArrayMessage();
+  }
 }
 ?>
 <html lang="ja">
